@@ -1,6 +1,11 @@
 title,category,latitude,longitude,severity,incident_date
-Street Robbery,Robbery,40.7128,-74.0060,high,2024-01-15 22:30:00
-Vehicle Theft,Theft,34.0522,-118.2437,medium,2024-02-03 03:15:00
-Assault Report,Assault,41.8781,-87.6298,high,2024-03-10 19:45:00
-Burglary,Burglary,29.7604,-95.3698,medium,2024-04-22 01:20:00
-Vandalism,Vandalism,33.4484,-112.0740,low,2024-05-08 14:00:00
+Street Robbery,Robbery,19.0760,72.8777,high,2024-01-15 22:30:00
+Vehicle Theft,Theft,28.7041,77.1025,medium,2024-02-03 03:15:00
+Assault Report,Assault,12.9716,77.5946,high,2024-03-10 19:45:00
+Burglary,Burglary,22.5726,88.3639,medium,2024-04-22 01:20:00
+Vandalism,Vandalism,17.3850,78.4867,low,2024-05-08 14:00:00
+Chain Snatching,Robbery,13.0827,80.2707,high,2024-06-12 18:10:00
+Pickpocketing,Theft,18.5204,73.8567,low,2024-07-04 11:45:00
+Domestic Dispute,Assault,26.9124,75.7873,medium,2024-08-19 21:30:00
+Warehouse Break-in,Burglary,23.0225,72.5714,high,2024-09-02 02:05:00
+Graffiti Incident,Vandalism,21.1702,72.8311,low,2024-10-25 16:20:00
