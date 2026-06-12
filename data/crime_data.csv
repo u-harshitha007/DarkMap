@@ -1,0 +1,6 @@
+title,category,latitude,longitude,severity,incident_date
+Street Robbery,Robbery,40.7128,-74.0060,high,2024-01-15 22:30:00
+Vehicle Theft,Theft,34.0522,-118.2437,medium,2024-02-03 03:15:00
+Assault Report,Assault,41.8781,-87.6298,high,2024-03-10 19:45:00
+Burglary,Burglary,29.7604,-95.3698,medium,2024-04-22 01:20:00
+Vandalism,Vandalism,33.4484,-112.0740,low,2024-05-08 14:00:00
