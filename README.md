@@ -197,7 +197,16 @@ This project helped me understand:
 
 ---
 
-## Future Vision
+## Future Enhancements
 
-DarkMap is designed as the foundation for a larger crime intelligence platform. Future versions will include predictive analytics, real-time crime monitoring, geospatial intelligence, and AI-powered insights to support data-driven decision making.
+Some features planned for future versions of DarkMap include:
+
+- Crime forecasting using machine learning
+- Real-time incident tracking
+- Heatmaps and hotspot detection
+- State and district comparison dashboards
+- Secure user authentication
+- Public crime reporting portal
+- Administrative monitoring dashboard
+- Exportable analytics reports
 
