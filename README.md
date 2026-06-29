@@ -2,22 +2,9 @@
 
 ## Crime Intelligence and Geospatial Analytics Platform
 
-DarkMap is a full-stack crime intelligence platform that visualizes crime incidents across India using interactive maps and analytics dashboards. The platform enables users to explore crime patterns, identify hotspots, analyze trends, and gain location-based insights through an intuitive web interface.
+DarkMap is a full-stack web application that helps visualize and analyze crime incidents across India using interactive maps and analytics. The goal of the project is to transform raw crime data into meaningful insights through geospatial visualization, filtering, and dashboards.
 
----
-
-## Project Overview
-
-DarkMap transforms raw crime datasets into meaningful visual intelligence by combining geospatial mapping, data analytics, and interactive filtering.
-
-The system provides:
-
-* Interactive crime visualization on an India map
-* Crime severity analysis
-* Category-based filtering
-* Crime statistics dashboard
-* Hotspot identification
-* Data-driven insights
+It allows users to explore crime patterns, identify hotspots, and analyze incidents based on crime category and severity.
 
 ---
 
@@ -25,37 +12,58 @@ The system provides:
 
 ### Interactive Crime Map
 
-* India-centered map visualization
+* Interactive India map
 * Location-based crime markers
-* Interactive popups with incident details
-* Severity-based color coding
+* Popups displaying incident details
+* Severity-based marker colors
 
 ### Analytics Dashboard
 
-* Total incident count
+* Total number of incidents
 * High severity crime count
 * Most common crime category
 * Crime distribution overview
 
-### Filtering System
+### Smart Filtering
 
-Users can filter incidents by:
+Users can filter crime data by:
 
 * Crime Category
 * Severity Level
 
-Filters update both map and dashboard statistics dynamically.
+The dashboard and map update instantly based on the selected filters.
 
-### Responsive User Interface
+### Responsive Interface
 
-* Dark theme design
-* Mobile-friendly layout
-* Modern dashboard interface
-* Consistent user experience across devices
+* Dark themed UI
+* Mobile responsive design
+* Interactive dashboard
+* Clean and intuitive user experience
 
 ---
- 
- 
+
+## Tech Stack
+
+### Frontend
+
+* React
+* Vite
+* JavaScript
+* Leaflet / React Leaflet
+* CSS
+
+### Backend
+
+* FastAPI
+* Python
+* Pandas
+
+### Dataset
+
+* CSV-based crime dataset
+
+---
+
 ## Project Structure
 
 ```text
@@ -68,18 +76,19 @@ DarkMap/
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── PageShell.jsx
-│   │   │   ├── DashboardCards.jsx
-│   │   │   ├── CrimeFilters.jsx
-│   │   │   └── CrimeMap.jsx
-│   │   │
-│   │   ├── pages/
-│   │   │   ├── LandingPage.jsx
-│   │   │   └── IndiaMapPage.jsx
-│   │   │
-│   │   └── utils/
-│   │       └── crimeUtils.js
+│   │
+│   │── components/
+│   │   ├── DashboardCards.jsx
+│   │   ├── CrimeFilters.jsx
+│   │   ├── CrimeMap.jsx
+│   │   └── PageShell.jsx
+│   │
+│   │── pages/
+│   │   ├── LandingPage.jsx
+│   │   └── IndiaMapPage.jsx
+│   │
+│   │── utils/
+│   │   └── crimeUtils.js
 │
 └── README.md
 ```
@@ -88,19 +97,19 @@ DarkMap/
 
 ## API Endpoints
 
-### Get All Incidents
+### Get all crime incidents
 
 ```http
 GET /incidents
 ```
 
-### Filter by Category
+### Filter by crime category
 
 ```http
 GET /incidents?category=Theft
 ```
 
-### Filter by Severity
+### Filter by severity
 
 ```http
 GET /incidents?severity=High
@@ -108,7 +117,7 @@ GET /incidents?severity=High
 
 ---
 
-## Installation and Setup
+## Getting Started
 
 ### Backend
 
@@ -120,11 +129,13 @@ pip install fastapi uvicorn pandas
 uvicorn main:app --reload
 ```
 
-Backend URL:
+Backend runs at:
 
 ```text
 http://localhost:8000
 ```
+
+---
 
 ### Frontend
 
@@ -136,7 +147,7 @@ npm install
 npm run dev
 ```
 
-Frontend URL:
+Frontend runs at:
 
 ```text
 http://localhost:5173
@@ -144,57 +155,49 @@ http://localhost:5173
 
 ---
 
-## Current Implementation
+## Current Features
 
-### Phase 1
-
-* Project setup
-* Landing page
-* FastAPI backend
-* Crime dataset integration
-
-### Phase 2
-
-* Interactive India map
-* Crime visualization markers
-* Severity-based color coding
-* Crime filters
-* Dashboard analytics
-* Statistics cards
+* Interactive crime visualization
+* FastAPI REST API
+* Dynamic crime filtering
+* Dashboard statistics
+* Severity-based visualization
+* Category-wise filtering
+* India-focused map interface
 
 ---
 
-## futher exploration
+## Future Improvements
 
-### Phase 3 – Crime Intelligence Dashboard
-
-* Advanced analytics page
-* Crime trend visualization
-* Category distribution charts
-* Severity distribution charts
-* State-wise crime statistics
-* Crime hotspot rankings
-
-### Phase 4 – Predictive Analytics
-
-* Machine learning integration
-* Crime trend forecasting
-* Risk prediction models
-* Pattern detection
-
-### Phase 5 – Advanced Geospatial Intelligence
-
+* Crime trend analytics
+* Interactive charts
+* State-wise comparison
+* District-level insights
 * Heatmap visualization
-* District-level analytics
-* Location clustering
-* Region comparison tools
-
-### Phase 6 – Real-Time Intelligence Platform
-
-* Live crime feeds
-* Real-time alerts
+* Crime hotspot detection
+* Machine learning based crime prediction
 * User authentication
-* Incident reporting system
-* Administrative dashboard
+* Incident reporting portal
+* Admin dashboard
+* Real-time crime data integration
 
 ---
+
+## Learning Outcomes
+
+This project helped me understand:
+
+* Building REST APIs using FastAPI
+* Working with real-world datasets using Pandas
+* Integrating frontend and backend
+* Interactive map visualization
+* Dashboard development
+* Data filtering and analytics
+* Full-stack application development
+
+---
+
+## Future Vision
+
+DarkMap is designed as the foundation for a larger crime intelligence platform. Future versions will include predictive analytics, real-time crime monitoring, geospatial intelligence, and AI-powered insights to support data-driven decision making.
+
