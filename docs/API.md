@@ -1,20 +1,27 @@
 # DarkMap — API Reference
 
-This document describes all available REST API endpoints exposed by
-the DarkMap FastAPI backend.
+This document describes all REST API endpoints exposed by the DarkMap FastAPI backend.
 
-**Base URL (development):** `http://localhost:8000`
-
-**Interactive docs:** `http://localhost:8000/docs` (Swagger UI)
-
-**Alternative docs:** `http://localhost:8000/redoc` (ReDoc)
+- **Base URL (development):** `http://localhost:8000`
+- **Interactive docs (Swagger UI):** `http://localhost:8000/docs`
+- **Alternative docs (ReDoc):** `http://localhost:8000/redoc`
+- **API version:** `0.1.0`
 
 ---
 
 ## Authentication
 
-The current version of the API requires **no authentication**.
+The current version of the API requires **no authentication**.  
 All endpoints are publicly accessible.
+
+---
+
+## Quick Reference
+
+| Method | Endpoint     | Purpose                                 |
+| ------ | ------------ | --------------------------------------- |
+| GET    | `/`          | Health check — returns server status    |
+| GET    | `/incidents` | Retrieve crime incidents, with optional filters |
 
 ---
 
@@ -24,9 +31,9 @@ All endpoints are publicly accessible.
 
 ### `GET /`
 
-Health-check endpoint. Returns the application name and running status.
+**Purpose:** Health-check endpoint. Confirms the server is running and returns the project name.
 
-#### Request
+#### Example Request
 
 ```http
 GET / HTTP/1.1
@@ -46,41 +53,36 @@ Host: localhost:8000
 
 ### `GET /incidents`
 
-Returns a list of crime incidents, optionally filtered by category and/or severity.
-
-#### Request
-
-```http
-GET /incidents HTTP/1.1
-Host: localhost:8000
-```
+**Purpose:** Returns a list of all crime incidents loaded from the dataset. Supports optional filtering by crime category and/or severity level. Both filters may be combined and are applied with **AND** logic (i.e., only incidents matching *all* supplied filters are returned).
 
 #### Query Parameters
 
-| Parameter | Type | Required | Description | Example |
-|---|---|---|---|---|
-| `category` | `string` | ❌ | Filter by crime category (case-insensitive) | `Robbery` |
-| `severity` | `string` | ❌ | Filter by severity level (case-insensitive) | `high` |
+| Parameter  | Type     | Required | Description                                          | Example    |
+| ---------- | -------- | -------- | ---------------------------------------------------- | ---------- |
+| `category` | `string` | No       | Filter by crime category (case-insensitive match)    | `Robbery`  |
+| `severity` | `string` | No       | Filter by severity level (`high`, `medium`, `low`)   | `high`     |
+
+> **Note:** Omitting both parameters returns all incidents with no filtering applied.
 
 #### Example Requests
 
 ```bash
-# All incidents
+# All incidents (no filter)
 curl http://localhost:8000/incidents
 
-# Filter by category
+# Filter by category only
 curl "http://localhost:8000/incidents?category=Robbery"
 
-# Filter by severity
+# Filter by severity only
 curl "http://localhost:8000/incidents?severity=high"
 
-# Combine filters
+# Combine category and severity (AND logic)
 curl "http://localhost:8000/incidents?category=Theft&severity=medium"
 ```
 
 #### Response `200 OK`
 
-Returns a JSON array of incident objects.
+Returns a JSON array of incident objects. Returns an empty array (`[]`) when no incidents match the applied filters.
 
 ```json
 [
@@ -107,17 +109,17 @@ Returns a JSON array of incident objects.
 
 #### Response Fields
 
-| Field | Type | Description |
-|---|---|---|
-| `id` | `integer` | Unique identifier |
-| `title` | `string` | Human-readable incident name |
-| `category` | `string` | Crime category |
-| `latitude` | `float` | WGS-84 latitude |
-| `longitude` | `float` | WGS-84 longitude |
-| `severity` | `string` | `high` / `medium` / `low` |
-| `incident_date` | `string` | ISO 8601 datetime string |
+| Field           | Type      | Description                                                       |
+| --------------- | --------- | ----------------------------------------------------------------- |
+| `id`            | `integer` | Unique incident identifier (primary key)                          |
+| `title`         | `string`  | Human-readable incident name                                      |
+| `category`      | `string`  | Crime category (e.g. `Robbery`, `Theft`, `Assault`)               |
+| `latitude`      | `float`   | Geographic latitude in WGS-84 decimal degrees                     |
+| `longitude`     | `float`   | Geographic longitude in WGS-84 decimal degrees                    |
+| `severity`      | `string`  | Severity level — one of `high`, `medium`, or `low`               |
+| `incident_date` | `string`  | Incident timestamp in ISO 8601 format (`YYYY-MM-DDTHH:MM:SS`)     |
 
-#### Response `200 OK` — Empty (no matches)
+#### Response `200 OK` — No Matches
 
 ```json
 []
@@ -129,13 +131,15 @@ Returns a JSON array of incident objects.
 
 The API returns standard HTTP status codes:
 
-| Status Code | Meaning |
-|---|---|
-| `200 OK` | Request succeeded |
-| `422 Unprocessable Entity` | Invalid query parameter type |
-| `500 Internal Server Error` | Unexpected server error |
+| Status Code                  | Meaning                                                      |
+| ---------------------------- | ------------------------------------------------------------ |
+| `200 OK`                     | Request succeeded                                            |
+| `422 Unprocessable Entity`   | A query parameter value has an invalid type                  |
+| `500 Internal Server Error`  | Unexpected server-side error                                 |
 
-### Example Error Response (`422`)
+### Example `422` Error Response
+
+Returned when a query parameter cannot be parsed (e.g. passing a non-string value where a string is expected):
 
 ```json
 {
@@ -153,21 +157,20 @@ The API returns standard HTTP status codes:
 
 ## CORS Policy
 
-The API allows cross-origin requests from:
+The API allows cross-origin requests from the following origin:
 
 ```
 http://localhost:5173
 ```
 
-This is the default Vite dev server origin. To allow other origins,
-update the `allow_origins` list in `main.py`.
+This matches the default Vite development server. To allow additional origins, update the `allow_origins` list in [`backend/main.py`](../backend/main.py).
 
 ---
 
 ## Rate Limiting
 
-No rate limiting is currently applied. This is appropriate for
-local development. If deploying publicly, add rate limiting middleware.
+No rate limiting is currently implemented. This is suitable for local development.  
+If deploying publicly, consider adding rate-limiting middleware (e.g. [`slowapi`](https://github.com/laurentS/slowapi)).
 
 ---
 
