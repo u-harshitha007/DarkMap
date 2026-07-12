@@ -304,7 +304,4 @@ Contributions are welcome. Please read [docs/CONTRIBUTING.md](docs/CONTRIBUTING.
 
 ---
 
-## Author
-
-**Harshitha**  
-GitHub: [u-harshitha007](https://github.com/u-harshitha007)
+ 
