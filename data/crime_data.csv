@@ -9,3 +9,43 @@ Pickpocketing,Theft,18.5204,73.8567,low,2024-07-04 11:45:00
 Domestic Dispute,Assault,26.9124,75.7873,medium,2024-08-19 21:30:00
 Warehouse Break-in,Burglary,23.0225,72.5714,high,2024-09-02 02:05:00
 Graffiti Incident,Vandalism,21.1702,72.8311,low,2024-10-25 16:20:00
+ATM Robbery,Robbery,28.6139,77.2090,high,2024-01-28 23:45:00
+Mobile Phone Theft,Theft,19.0760,72.8777,low,2024-02-14 13:20:00
+Road Rage Assault,Assault,12.9716,77.5946,medium,2024-02-20 18:00:00
+Shop Break-in,Burglary,17.3850,78.4867,high,2024-03-05 02:30:00
+Wall Graffiti,Vandalism,22.5726,88.3639,low,2024-03-22 09:15:00
+Jewellery Snatching,Robbery,13.0827,80.2707,high,2024-04-08 20:30:00
+Bicycle Theft,Theft,18.5204,73.8567,low,2024-04-15 16:40:00
+Bar Fight,Assault,26.9124,75.7873,medium,2024-05-01 23:00:00
+Office Burglary,Burglary,23.0225,72.5714,medium,2024-05-18 03:10:00
+Car Vandalism,Vandalism,21.1702,72.8311,medium,2024-06-03 11:30:00
+Mugging,Robbery,19.0760,72.8777,high,2024-06-20 21:15:00
+Laptop Theft,Theft,28.7041,77.1025,medium,2024-07-09 14:55:00
+School Brawl,Assault,12.9716,77.5946,low,2024-07-18 15:30:00
+Residential Break-in,Burglary,22.5726,88.3639,high,2024-08-02 01:45:00
+Public Property Damage,Vandalism,17.3850,78.4867,medium,2024-08-14 17:00:00
+Bus Stand Robbery,Robbery,13.0827,80.2707,high,2024-09-07 19:20:00
+Wallet Theft,Theft,18.5204,73.8567,low,2024-09-25 12:10:00
+Knife Assault,Assault,26.9124,75.7873,high,2024-10-03 22:40:00
+Pharmacy Break-in,Burglary,23.0225,72.5714,high,2024-10-19 04:00:00
+Signboard Vandalism,Vandalism,21.1702,72.8311,low,2024-11-06 10:45:00
+Market Robbery,Robbery,19.0760,72.8777,medium,2024-11-18 20:00:00
+Camera Theft,Theft,28.7041,77.1025,low,2024-11-29 08:30:00
+Stadium Brawl,Assault,12.9716,77.5946,medium,2024-12-04 18:45:00
+Hotel Break-in,Burglary,22.5726,88.3639,medium,2024-12-10 00:15:00
+Bus Vandalism,Vandalism,17.3850,78.4867,high,2024-12-20 13:00:00
+Airport Theft,Theft,28.5562,77.1000,medium,2024-01-10 07:20:00
+College Assault,Assault,18.9220,72.8347,medium,2024-02-28 16:30:00
+Bank Robbery,Robbery,17.3850,78.4867,high,2024-03-15 14:50:00
+Mall Theft,Theft,12.9716,77.5946,low,2024-04-02 15:00:00
+Park Vandalism,Vandalism,28.7041,77.1025,low,2024-04-30 19:10:00
+Night Market Mugging,Robbery,22.5726,88.3639,high,2024-05-25 23:30:00
+Hostel Burglary,Burglary,18.5204,73.8567,medium,2024-06-08 02:20:00
+Train Station Assault,Assault,13.0827,80.2707,high,2024-07-01 21:00:00
+Auto Theft,Theft,26.9124,75.7873,medium,2024-07-22 05:45:00
+Streetlight Vandalism,Vandalism,23.0225,72.5714,low,2024-08-07 20:30:00
+Taxi Robbery,Robbery,21.1702,72.8311,high,2024-08-28 23:10:00
+Construction Site Theft,Theft,19.0760,72.8777,low,2024-09-14 06:00:00
+Sports Centre Brawl,Assault,28.7041,77.1025,low,2024-09-30 17:20:00
+Godown Break-in,Burglary,12.9716,77.5946,high,2024-10-12 03:35:00
+Factory Vandalism,Vandalism,22.5726,88.3639,medium,2024-11-01 12:00:00

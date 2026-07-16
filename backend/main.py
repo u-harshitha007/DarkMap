@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Optional
 
 from fastapi import FastAPI, Query
@@ -34,6 +35,14 @@ def root():
 def get_incidents(
     category: Optional[str] = Query(default=None),
     severity: Optional[str] = Query(default=None),
+    date_from: Optional[date] = Query(
+        default=None,
+        description="Inclusive start date (YYYY-MM-DD). Filters incidents on or after this date.",
+    ),
+    date_to: Optional[date] = Query(
+        default=None,
+        description="Inclusive end date (YYYY-MM-DD). Filters incidents on or before this date.",
+    ),
 ):
     incidents = load_crime_incidents()
 
@@ -49,6 +58,20 @@ def get_incidents(
             incident
             for incident in incidents
             if incident["severity"] == severity.lower()
+        ]
+
+    if date_from:
+        incidents = [
+            incident
+            for incident in incidents
+            if incident["incident_date"].date() >= date_from
+        ]
+
+    if date_to:
+        incidents = [
+            incident
+            for incident in incidents
+            if incident["incident_date"].date() <= date_to
         ]
 
     return incidents

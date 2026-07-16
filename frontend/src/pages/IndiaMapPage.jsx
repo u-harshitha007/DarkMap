@@ -14,6 +14,8 @@ export default function IndiaMapPage() {
   const [allIncidents, setAllIncidents] = useState([]);
   const [category, setCategory] = useState("");
   const [severity, setSeverity] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -47,21 +49,44 @@ export default function IndiaMapPage() {
   }, [allIncidents]);
 
   const filteredIncidents = useMemo(() => {
+    const fromTs = dateFrom ? new Date(dateFrom).getTime() : null;
+    // Set dateTo to end-of-day so the selected day is fully inclusive
+    const toTs = dateTo ? new Date(dateTo + "T23:59:59").getTime() : null;
+
     return allIncidents.filter((incident) => {
       const matchesCategory = category
         ? incident.category.toLowerCase() === category.toLowerCase()
         : true;
+
       const matchesSeverity = severity
         ? incident.severity === severity.toLowerCase()
         : true;
 
-      return matchesCategory && matchesSeverity;
+      const incidentTs = new Date(incident.incident_date).getTime();
+      const matchesFrom = fromTs !== null ? incidentTs >= fromTs : true;
+      const matchesTo = toTs !== null ? incidentTs <= toTs : true;
+
+      return matchesCategory && matchesSeverity && matchesFrom && matchesTo;
     });
-  }, [allIncidents, category, severity]);
+  }, [allIncidents, category, severity, dateFrom, dateTo]);
 
   const highSeverityCases = filteredIncidents.filter(
     (incident) => incident.severity === "high",
   ).length;
+
+  // Derive the active date range label for UI feedback
+  const dateRangeLabel = useMemo(() => {
+    if (!dateFrom && !dateTo) return null;
+    const fmt = (d) =>
+      new Date(d).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    if (dateFrom && dateTo) return `${fmt(dateFrom)} – ${fmt(dateTo)}`;
+    if (dateFrom) return `From ${fmt(dateFrom)}`;
+    return `Until ${fmt(dateTo)}`;
+  }, [dateFrom, dateTo]);
 
   return (
     <PageShell>
@@ -70,6 +95,9 @@ export default function IndiaMapPage() {
           <h2 className="text-xl font-semibold text-white">India Crime Map</h2>
           <p className="mt-1 text-sm text-zinc-400">
             Incident markers colored by severity across Indian cities.
+            {dateRangeLabel && (
+              <span className="ml-2 text-red-400/80">{dateRangeLabel}</span>
+            )}
           </p>
         </section>
 
@@ -83,8 +111,12 @@ export default function IndiaMapPage() {
           categories={categories}
           category={category}
           severity={severity}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
           onCategoryChange={setCategory}
           onSeverityChange={setSeverity}
+          onDateFromChange={setDateFrom}
+          onDateToChange={setDateTo}
         />
 
         <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.15em] text-zinc-400">
