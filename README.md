@@ -1,117 +1,54 @@
 # DarkMap
 
-A full-stack web application for visualising geo-tagged crime incidents across Indian cities on an interactive map, with server-side data management and client-side filtering by category and severity.
+A full-stack crime analytics dashboard that visualises geo-tagged incidents across Indian cities on an interactive map. Filter by category, severity, and date range in real time.
+
+![Tech Stack](https://img.shields.io/badge/Python-3.11+-blue?style=flat-square) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green?style=flat-square) ![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-38bdf8?style=flat-square)
 
 ---
 
-## Table of Contents
+## Overview
 
-- [Project Overview](#project-overview)
-- [Problem Statement](#problem-statement)
-- [Objectives](#objectives)
-- [Key Features](#key-features)
-- [System Architecture](#system-architecture)
-- [Technology Stack](#technology-stack)
-- [Project Structure](#project-structure)
-- [Dataset Information](#dataset-information)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Future Roadmap](#future-roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
+DarkMap pairs a **FastAPI** REST backend with a **React + Vite** frontend to turn structured crime data into an explorable geospatial interface. Incidents are rendered as severity-coded circle markers on a Leaflet map. A filter panel lets users narrow down by crime category, severity level, and date range — with the map and dashboard cards updating instantly.
 
 ---
 
-## Project Overview
+## Features
 
-DarkMap is a full-stack web application that transforms structured crime incident data into an interactive geospatial interface. The application pairs a FastAPI REST backend — which manages data persistence and exposes a filterable API — with a React frontend that renders incidents as severity-coded markers on a Leaflet map.
-
-The project demonstrates practical integration of a Python API layer with a modern JavaScript frontend, REST-based query filtering, and component-driven UI design.
-
----
-
-## Problem Statement
-
-Raw crime data is typically available in tabular formats that are difficult to interpret spatially. Analysts and policymakers benefit from visual tools that allow them to explore incident distribution, identify geographic patterns, and filter by relevant attributes such as crime type or severity. DarkMap addresses this by providing a lightweight, browser-based interface for geospatial crime exploration.
-
----
-
-## Objectives
-
-- Provide a clear geospatial view of crime incidents across major Indian cities.
-- Allow users to filter incidents by crime category and severity level in real time.
-- Expose incident data through a well-defined REST API.
-- Maintain a clean separation between the data layer, API layer, and presentation layer.
-- Serve as a reproducible reference implementation for full-stack geospatial applications.
+- **Interactive Leaflet Map** — pan, zoom, click markers for incident details
+- **Severity-coded Markers** — red (high), amber (medium), green (low)
+- **Four-way Filter Panel** — filter by category, severity, from-date, and to-date simultaneously
+- **Reset Filters Button** — one click to clear all active filters
+- **Live Dashboard Cards** — total incidents, high-severity count, most common category — all reactive to active filters
+- **Date Range Label** — active date range displayed inline on the page heading
+- **50-incident Dataset** — realistic sample data across 10 major Indian cities, spanning Jan–Dec 2024
+- **FastAPI with Swagger UI** — auto-generated interactive API docs at `/docs`
+- **Dark UI** — dark colour scheme built for map-heavy interfaces
 
 ---
 
-## Key Features
-
-- **Interactive Map** — Leaflet-based map centred on India, supporting pan and zoom.
-- **Severity-coded Markers** — Incidents are colour-coded by severity: high (red), medium (amber), and low (green).
-- **Real-time Filtering** — Dropdowns filter visible markers by crime category and severity without a page reload.
-- **Dashboard Summary** — Cards display total incident count, high-severity count, and the most frequent crime category for the active filter state.
-- **REST API with Auto-generated Docs** — FastAPI provides a `/docs` endpoint with interactive Swagger UI out of the box.
-- **Dark UI Theme** — Interface uses a dark colour scheme suitable for map-centric applications.
-
----
-
-## System Architecture
-
-The application follows a standard client-server architecture. The React frontend communicates with the FastAPI backend over HTTP. All data resides in a SQLite database seeded from a CSV file at startup.
-
-```
-Browser (React + Vite — localhost:5173)
-    |
-    |   HTTP GET /incidents?category=...&severity=...
-    |
-FastAPI Backend (localhost:8000)
-    |
-    |-- main.py         (route definitions, CORS middleware)
-    |-- data_loader.py  (reads crime_data.csv, returns incident dicts)
-    |-- models.py       (SQLAlchemy ORM model: CrimeIncident)
-    |-- schemas.py      (Pydantic schemas: CrimeIncidentBase, CrimeIncidentRead)
-    |-- crud.py         (database query helpers)
-    |-- database.py     (SQLAlchemy engine and session factory)
-    |
-SQLite Database (darkmap.db)
-```
-
-**Request lifecycle:**
-
-1. The frontend sends a `GET /incidents` request with optional `category` and `severity` query parameters.
-2. FastAPI reads the CSV via `data_loader.py`, applies Python-level filtering, and returns a JSON array validated against the `CrimeIncidentRead` Pydantic schema.
-3. The frontend stores the response in component state and derives filtered views using `useMemo`, passing the result to the map and dashboard components.
-
-For a detailed breakdown, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
----
-
-## Technology Stack
+## Tech Stack
 
 ### Backend
 
-| Technology  | Version  | Purpose                        |
-|-------------|----------|--------------------------------|
-| Python      | 3.11+    | Runtime                        |
-| FastAPI     | 0.115.6  | REST API framework             |
-| Uvicorn     | 0.34.0   | ASGI server                    |
-| SQLAlchemy  | 2.0.36   | ORM and database toolkit       |
-| Pydantic    | 2.10.3   | Data validation and serialisation |
-| SQLite      | Built-in | Embedded relational database   |
+| Technology | Version | Purpose |
+|---|---|---|
+| Python | 3.11+ | Runtime |
+| FastAPI | 0.115.6 | REST API framework |
+| Uvicorn | 0.34.0 | ASGI server |
+| SQLAlchemy | 2.0.36 | ORM and database toolkit |
+| Pydantic | 2.10.3 | Data validation and serialisation |
+| SQLite | Built-in | Embedded relational database |
 
 ### Frontend
 
-| Technology    | Version | Purpose                     |
-|---------------|---------|-----------------------------|
-| React         | 19.x    | UI component framework      |
-| Vite          | 8.x     | Build tool and dev server   |
-| React-Leaflet | 5.x     | React wrapper for Leaflet   |
-| Leaflet.js    | 1.9.x   | Core mapping library        |
-| TailwindCSS   | 4.x     | Utility-first CSS framework |
-| React Router  | 7.x     | Client-side routing         |
+| Technology | Version | Purpose |
+|---|---|---|
+| React | 19.x | UI component framework |
+| Vite | 8.x | Build tool and dev server |
+| React-Leaflet | 5.x | React wrapper for Leaflet |
+| Leaflet.js | 1.9.x | Core mapping library |
+| TailwindCSS | 4.x | Utility-first CSS framework |
+| React Router | 7.x | Client-side routing |
 
 ---
 
@@ -120,127 +57,134 @@ For a detailed breakdown, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ```
 DarkMap/
 ├── backend/
-│   ├── main.py               # Application entry point and route definitions
-│   ├── models.py             # SQLAlchemy ORM model (CrimeIncident)
-│   ├── schemas.py            # Pydantic request/response schemas
-│   ├── crud.py               # Database query helpers
-│   ├── database.py           # Engine and session factory
-│   ├── data_loader.py        # CSV-to-dict loader used by the API
-│   └── requirements.txt      # Python dependencies
+│   ├── main.py           # Routes, CORS, query param filtering (category, severity, date_from, date_to)
+│   ├── models.py         # SQLAlchemy ORM model — CrimeIncident
+│   ├── schemas.py        # Pydantic schemas — CrimeIncidentBase, CrimeIncidentRead
+│   ├── crud.py           # Database query helpers
+│   ├── database.py       # SQLAlchemy engine and session factory
+│   ├── data_loader.py    # Reads crime_data.csv and returns incident dicts
+│   └── requirements.txt  # Python dependencies
 │
 ├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── CrimeMap.jsx          # Leaflet map with severity markers
-│   │   │   ├── CrimeFilters.jsx      # Category and severity filter dropdowns
-│   │   │   ├── DashboardCards.jsx    # Summary statistics cards
-│   │   │   └── PageShell.jsx         # Navigation bar and layout container
-│   │   ├── pages/
-│   │   │   ├── LandingPage.jsx       # Application entry screen
-│   │   │   └── IndiaMapPage.jsx      # Primary map dashboard
-│   │   ├── utils/
-│   │   │   └── crimeUtils.js         # API base URL, severity colour map, helpers
-│   │   ├── App.jsx                   # Route configuration
-│   │   └── main.jsx                  # React DOM entry point
-│   ├── index.html
-│   ├── vite.config.js
-│   └── package.json
+│   └── src/
+│       ├── components/
+│       │   ├── CrimeMap.jsx        # Leaflet map with circle markers and popups
+│       │   ├── CrimeFilters.jsx    # Category, severity, from-date, to-date filters + reset
+│       │   ├── DashboardCards.jsx  # Summary stat cards (total, high-severity, top category)
+│       │   └── PageShell.jsx       # Nav bar and layout wrapper
+│       ├── pages/
+│       │   ├── LandingPage.jsx     # Hero / entry screen
+│       │   └── IndiaMapPage.jsx    # Main dashboard — state, filtering logic, layout
+│       ├── utils/
+│       │   └── crimeUtils.js       # API_BASE_URL, SEVERITY_COLORS, formatIncidentDate, getMostCommonCategory
+│       ├── App.jsx                 # React Router route config
+│       └── main.jsx                # React DOM entry point
 │
 ├── data/
-│   └── crime_data.csv        # Seed dataset (10 incidents across Indian cities)
+│   └── crime_data.csv    # 50 sample incidents across 10 Indian cities (Jan–Dec 2024)
 │
 ├── docs/
-│   ├── ARCHITECTURE.md       # Detailed architecture documentation
-│   ├── DATASET.md            # Dataset schema and extension guide
-│   ├── API.md                # API endpoint reference
-│   ├── INSTALLATION.md       # Platform-specific installation guide
-│   └── CONTRIBUTING.md       # Contribution workflow and guidelines
+│   ├── ARCHITECTURE.md
+│   ├── API.md
+│   ├── DATASET.md
+│   ├── INSTALLATION.md
+│   └── CONTRIBUTING.md
 │
-├── assets/
-│   └── screenshots/          # UI screenshots
-│
-├── .gitignore
-├── LICENSE
 └── README.md
 ```
 
 ---
 
-## Dataset Information
+## Architecture
 
-The application is seeded from `data/crime_data.csv`. The file contains 10 sample incidents distributed across major Indian cities.
-
-### Schema
-
-| Column          | Type     | Description                                              |
-|-----------------|----------|----------------------------------------------------------|
-| `title`         | string   | Descriptive name of the incident                         |
-| `category`      | string   | Crime type: Robbery, Theft, Assault, Burglary, Vandalism |
-| `latitude`      | float    | WGS-84 decimal latitude                                  |
-| `longitude`     | float    | WGS-84 decimal longitude                                 |
-| `severity`      | string   | Severity level: `high`, `medium`, or `low`               |
-| `incident_date` | datetime | Timestamp in ISO 8601 format (YYYY-MM-DD HH:MM:SS)       |
-
-### Sample Data
-
-```csv
-title,category,latitude,longitude,severity,incident_date
-Street Robbery,Robbery,19.0760,72.8777,high,2024-01-15 22:30:00
-Vehicle Theft,Theft,28.7041,77.1025,medium,2024-02-03 03:15:00
-Assault Report,Assault,12.9716,77.5946,high,2024-03-10 19:45:00
+```
+Browser  (React + Vite — localhost:5173)
+    │
+    │  GET /incidents?category=&severity=&date_from=&date_to=
+    │
+FastAPI  (localhost:8000)
+    │
+    ├── data_loader.py  →  reads crime_data.csv
+    ├── Python-level filtering  (category / severity / date range)
+    └── Pydantic validation  →  JSON response
 ```
 
-Cities represented: Mumbai, Delhi, Bengaluru, Kolkata, Hyderabad, Chennai, Pune, Jaipur, Ahmedabad, Surat.
+All state lives in `IndiaMapPage`. `filteredIncidents` is derived via `useMemo` — no global store needed at this scale.
 
-For the full dataset reference, see [docs/DATASET.md](docs/DATASET.md).
+Full breakdown: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+
+---
+
+## API Reference
+
+Base URL: `http://localhost:8000`  
+Interactive docs: `http://localhost:8000/docs`
+
+### `GET /incidents`
+
+Returns all incidents. All parameters are optional and combine with AND logic.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `category` | string | Filter by crime category (case-insensitive) |
+| `severity` | string | `high`, `medium`, or `low` |
+| `date_from` | date | Inclusive start date — `YYYY-MM-DD` |
+| `date_to` | date | Inclusive end date — `YYYY-MM-DD` |
+
+```bash
+# All incidents
+curl http://localhost:8000/incidents
+
+# High-severity robberies in Q1 2024
+curl "http://localhost:8000/incidents?category=Robbery&severity=high&date_from=2024-01-01&date_to=2024-03-31"
+```
+
+Full reference: [docs/API.md](docs/API.md)
+
+---
+
+## Dataset
+
+50 fictional incidents across 10 Indian cities — Mumbai, Delhi, Bengaluru, Kolkata, Hyderabad, Chennai, Pune, Jaipur, Ahmedabad, and Surat.  
+5 categories: `Robbery`, `Theft`, `Assault`, `Burglary`, `Vandalism`  
+3 severity levels: `high`, `medium`, `low`  
+Date range: January 2024 – December 2024
+
+Schema reference: [docs/DATASET.md](docs/DATASET.md)
 
 ---
 
 ## Installation
 
-### Prerequisites
+**Prerequisites:** Python 3.11+, Node.js 18+, npm 9+
 
-| Requirement | Minimum Version |
-|-------------|-----------------|
-| Python      | 3.11            |
-| Node.js     | 18 LTS          |
-| npm         | 9               |
-| Git         | Any             |
-
-### 1. Clone the Repository
+### 1. Clone
 
 ```bash
 git clone https://github.com/u-harshitha007/DarkMap.git
 cd DarkMap
 ```
 
-### 2. Backend Setup
+### 2. Backend
 
 ```bash
 cd backend
-
-# Create and activate a virtual environment
 python -m venv venv
 
 # Windows
 venv\Scripts\activate
-
 # macOS / Linux
 source venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
-
-# Start the API server
 uvicorn main:app --reload
 ```
 
-The API will be available at `http://localhost:8000`.  
-Interactive documentation (Swagger UI): `http://localhost:8000/docs`.
+API running at `http://localhost:8000`
 
-### 3. Frontend Setup
+### 3. Frontend
 
-Open a separate terminal from the project root:
+Open a second terminal from the project root:
 
 ```bash
 cd frontend
@@ -248,60 +192,60 @@ npm install
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`.
+App running at `http://localhost:5173`
 
-For a platform-specific guide including troubleshooting, see [docs/INSTALLATION.md](docs/INSTALLATION.md).
+For platform-specific troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.md)
 
 ---
 
 ## Usage
 
-1. Start the backend server (`uvicorn main:app --reload` from `backend/`).
-2. Start the frontend dev server (`npm run dev` from `frontend/`).
-3. Open `http://localhost:5173` in a browser.
-4. Navigate from the landing page to the India Crime Map dashboard.
-5. Use the Category and Severity dropdowns to filter the visible incidents.
-6. The dashboard cards and map update in real time based on the active filters.
-
-### API Reference
-
-```
-GET /                                       # Health check
-GET /incidents                              # All incidents
-GET /incidents?category=Robbery             # Filter by category (case-insensitive)
-GET /incidents?severity=high                # Filter by severity
-GET /incidents?category=Theft&severity=low  # Combined filter
-```
-
-Full endpoint documentation: [docs/API.md](docs/API.md).
+1. Start the backend (`uvicorn main:app --reload` inside `backend/`)
+2. Start the frontend (`npm run dev` inside `frontend/`)
+3. Open `http://localhost:5173`
+4. Go to **India Map** from the landing page
+5. Use the filter panel to narrow by category, severity, or date range
+6. The map markers and dashboard cards update instantly
+7. Hit **Reset Filters** to clear everything
 
 ---
 
-## Future Roadmap
+## Roadmap
 
-| Priority | Item                                                      |
-|----------|-----------------------------------------------------------|
-| High     | Integrate a real open-data crime dataset                  |
-| High     | Add user authentication for administrative access         |
-| Medium   | Implement a heatmap layer using Leaflet.heat               |
-| Medium   | Add date-range filtering to the API and UI                |
-| Medium   | Paginate the `/incidents` endpoint for large datasets     |
-| Low      | Export filtered results to CSV or PDF                     |
-| Low      | Add city-level geocoding and search                       |
-| Low      | Write unit tests for API routes and React components      |
-| Low      | Add a Docker Compose configuration for one-command setup  |
+| Status | Item |
+|---|---|
+| ✅ Done | Interactive Leaflet map with severity markers |
+| ✅ Done | Category and severity filtering |
+| ✅ Done | Dashboard summary cards |
+| ✅ Done | Date-range filtering (API + UI) |
+| ✅ Done | 50-incident dataset across Indian cities |
+| 🔲 Planned | Heatmap layer (Leaflet.heat) |
+| 🔲 Planned | Paginate `/incidents` for large datasets |
+| 🔲 Planned | User authentication for admin access |
+| 🔲 Planned | Export filtered results to CSV |
+| 🔲 Planned | City-level search and geocoding |
+| 🔲 Planned | Docker Compose for one-command setup |
+| 🔲 Planned | Unit tests for API routes and React components |
 
 ---
 
 ## Contributing
 
-Contributions are welcome. Please read [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for the full workflow. In brief:
+1. Fork the repo
+2. Create a branch: `git checkout -b feature/your-feature`
+3. Commit with [Conventional Commits](https://www.conventionalcommits.org/): `git commit -m "feat: description"`
+4. Push and open a PR against `main`
 
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes using [Conventional Commits](https://www.conventionalcommits.org/): `git commit -m "feat: description"`
-4. Push to your fork and open a Pull Request against `main`.
+Full guide: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
 
 ---
 
- 
+## License
+
+[MIT](LICENSE)
+
+---
+
+## Author
+
+**Harshitha** — [github.com/u-harshitha007](https://github.com/u-harshitha007)
