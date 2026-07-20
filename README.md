@@ -236,23 +236,5 @@ For platform-specific troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.
 
 ---
 
-## Contributing
-
-1. Fork the repo
-2. Create a branch: `git checkout -b feature/your-feature`
-3. Commit with [Conventional Commits](https://www.conventionalcommits.org/): `git commit -m "feat: description"`
-4. Push and open a PR against `main`
-
-Full guide: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
-
----
-
-## License
-
-[MIT](LICENSE)
-
----
-
-## Author
-
-**Harshitha** — [github.com/u-harshitha007](https://github.com/u-harshitha007)
+ 
+ 
