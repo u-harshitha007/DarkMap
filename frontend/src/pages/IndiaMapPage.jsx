@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import CitySearch from "../components/CitySearch";
 import CrimeFilters from "../components/CrimeFilters";
 import CrimeMap from "../components/CrimeMap";
 import DashboardCards from "../components/DashboardCards";
@@ -18,6 +19,9 @@ export default function IndiaMapPage() {
   const [dateTo, setDateTo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Part 1: search state — functionality wired in Part 2
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function fetchIncidents() {
@@ -131,6 +135,9 @@ export default function IndiaMapPage() {
           ))}
         </div>
 
+        {/* City search — Part 1: UI only, map pan wired in Part 2 */}
+        <CitySearch searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+
         {loading && (
           <p className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-6 text-zinc-400">
             Loading crime incidents...
@@ -143,8 +150,7 @@ export default function IndiaMapPage() {
           </p>
         )}
 
-        {!loading && !error && <CrimeMap incidents={filteredIncidents} />}
-      </div>
+        {!loading && !error && <CrimeMap incidents={filteredIncidents} />}      </div>
     </PageShell>
   );
 }
