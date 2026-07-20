@@ -23,6 +23,9 @@ export default function IndiaMapPage() {
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // focusTarget: { id, lat, lng } of incident to pan/highlight, or null
+  const [focusTarget, setFocusTarget] = useState(null);
+
   useEffect(() => {
     async function fetchIncidents() {
       try {
@@ -49,7 +52,7 @@ export default function IndiaMapPage() {
   }, []);
 
   const categories = useMemo(() => {
-    return [...new Set(allIncidents.map((incident) => incident.category))].sort();
+    return [...new Set(allIncidents.map((i) => i.category))].sort();
   }, [allIncidents]);
 
   // Base filter: category + severity + date range
@@ -75,17 +78,37 @@ export default function IndiaMapPage() {
   }, [allIncidents, category, severity, dateFrom, dateTo]);
 
   // Search layer: applied on top of filteredIncidents
-  // Matches city name, incident title, and category (all case-insensitive)
   const searchResults = useMemo(
     () => searchIncidents(filteredIncidents, searchQuery),
     [filteredIncidents, searchQuery],
   );
 
+  // Auto-focus the first search result whenever the results list changes
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      const first = searchResults[0];
+      setFocusTarget({ id: first.id, lat: first.latitude, lng: first.longitude });
+    } else {
+      // No results or search cleared — reset map to India overview
+      setFocusTarget(null);
+    }
+  }, [searchResults]);
+
+  // Handle manual row selection from the results list
+  function handleSelectIncident(incident) {
+    setFocusTarget({ id: incident.id, lat: incident.latitude, lng: incident.longitude });
+  }
+
+  // When the search bar is cleared, also reset the focus
+  function handleSearchChange(value) {
+    setSearchQuery(value);
+    if (!value.trim()) setFocusTarget(null);
+  }
+
   const highSeverityCases = filteredIncidents.filter(
-    (incident) => incident.severity === "high",
+    (i) => i.severity === "high",
   ).length;
 
-  // Derive the active date range label for UI feedback
   const dateRangeLabel = useMemo(() => {
     if (!dateFrom && !dateTo) return null;
     const fmt = (d) =>
@@ -145,12 +168,17 @@ export default function IndiaMapPage() {
         {/* City / title / category search */}
         <CitySearch
           searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchChange={handleSearchChange}
           resultCount={searchQuery.trim() ? searchResults.length : undefined}
         />
 
-        {/* Search results list — visible only when query is active */}
-        <SearchResults incidents={searchResults} searchQuery={searchQuery} />
+        {/* Clickable results list — selecting a row pans the map */}
+        <SearchResults
+          incidents={searchResults}
+          searchQuery={searchQuery}
+          selectedId={focusTarget?.id ?? null}
+          onSelect={handleSelectIncident}
+        />
 
         {loading && (
           <p className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-6 text-zinc-400">
@@ -164,7 +192,9 @@ export default function IndiaMapPage() {
           </p>
         )}
 
-        {!loading && !error && <CrimeMap incidents={filteredIncidents} />}
+        {!loading && !error && (
+          <CrimeMap incidents={filteredIncidents} focusTarget={focusTarget} />
+        )}
       </div>
     </PageShell>
   );

@@ -1,13 +1,17 @@
 import { formatIncidentDate, getCityForIncident, SEVERITY_COLORS } from "../utils/crimeUtils";
 
 /**
- * SearchResults — Part 2
- * Renders a list of incidents that match the active search query.
- * Only visible when searchQuery is non-empty.
- * Does NOT interact with the map (map auto-zoom is Part 3).
+ * SearchResults — Part 3
+ * Renders the list of matching incidents.
+ * Clicking a row calls onSelect(incident) to trigger map pan + highlight.
+ * The currently selected incident is visually highlighted in the list.
  */
-export default function SearchResults({ incidents, searchQuery }) {
-  // Nothing to show when search bar is empty
+export default function SearchResults({
+  incidents,
+  searchQuery,
+  selectedId,
+  onSelect,
+}) {
   if (!searchQuery.trim()) return null;
 
   return (
@@ -51,15 +55,26 @@ export default function SearchResults({ incidents, searchQuery }) {
 
       {/* Results list */}
       {incidents.length > 0 && (
-        <ul className="divide-y divide-zinc-800/60 max-h-72 overflow-y-auto">
+        <ul className="max-h-72 divide-y divide-zinc-800/60 overflow-y-auto">
           {incidents.map((incident) => {
             const city = getCityForIncident(incident);
             const dotColor = SEVERITY_COLORS[incident.severity];
+            const isSelected = selectedId === incident.id;
 
             return (
               <li
                 key={incident.id}
-                className="flex items-start gap-3 px-5 py-3.5 transition hover:bg-zinc-800/40"
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
+                onClick={() => onSelect(incident)}
+                onKeyDown={(e) => e.key === "Enter" && onSelect(incident)}
+                className={`flex cursor-pointer items-start gap-3 px-5 py-3.5 transition
+                  ${
+                    isSelected
+                      ? "bg-red-500/10 ring-1 ring-inset ring-red-500/30"
+                      : "hover:bg-zinc-800/40"
+                  }`}
               >
                 {/* Severity dot */}
                 <span
@@ -71,7 +86,11 @@ export default function SearchResults({ incidents, searchQuery }) {
                 <div className="min-w-0 flex-1">
                   {/* Title + city */}
                   <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                    <p className="truncate text-sm font-medium text-zinc-100">
+                    <p
+                      className={`truncate text-sm font-medium ${
+                        isSelected ? "text-white" : "text-zinc-100"
+                      }`}
+                    >
                       {incident.title}
                     </p>
                     <span className="shrink-0 text-xs text-zinc-500">{city}</span>
@@ -83,6 +102,13 @@ export default function SearchResults({ incidents, searchQuery }) {
                     <span>{formatIncidentDate(incident.incident_date)}</span>
                   </div>
                 </div>
+
+                {/* "On map" indicator for selected row */}
+                {isSelected && (
+                  <span className="mt-1 shrink-0 text-xs font-medium text-red-400">
+                    on map
+                  </span>
+                )}
               </li>
             );
           })}
