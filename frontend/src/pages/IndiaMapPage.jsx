@@ -5,9 +5,11 @@ import CrimeFilters from "../components/CrimeFilters";
 import CrimeMap from "../components/CrimeMap";
 import DashboardCards from "../components/DashboardCards";
 import PageShell from "../components/PageShell";
+import SearchResults from "../components/SearchResults";
 import {
   API_BASE_URL,
   getMostCommonCategory,
+  searchIncidents,
   SEVERITY_COLORS,
 } from "../utils/crimeUtils";
 
@@ -19,8 +21,6 @@ export default function IndiaMapPage() {
   const [dateTo, setDateTo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // Part 1: search state — functionality wired in Part 2
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -52,9 +52,9 @@ export default function IndiaMapPage() {
     return [...new Set(allIncidents.map((incident) => incident.category))].sort();
   }, [allIncidents]);
 
+  // Base filter: category + severity + date range
   const filteredIncidents = useMemo(() => {
     const fromTs = dateFrom ? new Date(dateFrom).getTime() : null;
-    // Set dateTo to end-of-day so the selected day is fully inclusive
     const toTs = dateTo ? new Date(dateTo + "T23:59:59").getTime() : null;
 
     return allIncidents.filter((incident) => {
@@ -73,6 +73,13 @@ export default function IndiaMapPage() {
       return matchesCategory && matchesSeverity && matchesFrom && matchesTo;
     });
   }, [allIncidents, category, severity, dateFrom, dateTo]);
+
+  // Search layer: applied on top of filteredIncidents
+  // Matches city name, incident title, and category (all case-insensitive)
+  const searchResults = useMemo(
+    () => searchIncidents(filteredIncidents, searchQuery),
+    [filteredIncidents, searchQuery],
+  );
 
   const highSeverityCases = filteredIncidents.filter(
     (incident) => incident.severity === "high",
@@ -135,8 +142,15 @@ export default function IndiaMapPage() {
           ))}
         </div>
 
-        {/* City search — Part 1: UI only, map pan wired in Part 2 */}
-        <CitySearch searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+        {/* City / title / category search */}
+        <CitySearch
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          resultCount={searchQuery.trim() ? searchResults.length : undefined}
+        />
+
+        {/* Search results list — visible only when query is active */}
+        <SearchResults incidents={searchResults} searchQuery={searchQuery} />
 
         {loading && (
           <p className="rounded-xl border border-zinc-800 bg-zinc-900/70 p-6 text-zinc-400">
@@ -150,7 +164,8 @@ export default function IndiaMapPage() {
           </p>
         )}
 
-        {!loading && !error && <CrimeMap incidents={filteredIncidents} />}      </div>
+        {!loading && !error && <CrimeMap incidents={filteredIncidents} />}
+      </div>
     </PageShell>
   );
 }
