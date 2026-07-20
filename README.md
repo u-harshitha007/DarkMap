@@ -16,6 +16,9 @@ DarkMap pairs a **FastAPI** REST backend with a **React + Vite** frontend to tur
 
 - **Interactive Leaflet Map** — pan, zoom, click markers for incident details
 - **Severity-coded Markers** — red (high), amber (medium), green (low)
+- **City Search** — search by city, incident title, or category; map auto-pans and zooms to the first match with animated `flyTo`
+- **Highlighted Marker** — the focused incident renders with a larger radius and white border so it stands out clearly
+- **Clickable Search Results** — each result row is selectable; clicking any row re-pans the map to that specific incident
 - **Four-way Filter Panel** — filter by category, severity, from-date, and to-date simultaneously
 - **Reset Filters Button** — one click to clear all active filters
 - **Live Dashboard Cards** — total incidents, high-severity count, most common category — all reactive to active filters
@@ -68,15 +71,17 @@ DarkMap/
 ├── frontend/
 │   └── src/
 │       ├── components/
-│       │   ├── CrimeMap.jsx        # Leaflet map with circle markers and popups
+│       │   ├── CrimeMap.jsx        # Leaflet map — markers, highlight, flyTo controller
 │       │   ├── CrimeFilters.jsx    # Category, severity, from-date, to-date filters + reset
+│       │   ├── CitySearch.jsx      # Search input with live result count badge
+│       │   ├── SearchResults.jsx   # Clickable results list with severity dots and city labels
 │       │   ├── DashboardCards.jsx  # Summary stat cards (total, high-severity, top category)
 │       │   └── PageShell.jsx       # Nav bar and layout wrapper
 │       ├── pages/
 │       │   ├── LandingPage.jsx     # Hero / entry screen
 │       │   └── IndiaMapPage.jsx    # Main dashboard — state, filtering logic, layout
 │       ├── utils/
-│       │   └── crimeUtils.js       # API_BASE_URL, SEVERITY_COLORS, formatIncidentDate, getMostCommonCategory
+│       │   └── crimeUtils.js       # API_BASE_URL, SEVERITY_COLORS, CITY_COORDINATES, helpers
 │       ├── App.jsx                 # React Router route config
 │       └── main.jsx                # React DOM entry point
 │
@@ -204,9 +209,11 @@ For platform-specific troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.
 2. Start the frontend (`npm run dev` inside `frontend/`)
 3. Open `http://localhost:5173`
 4. Go to **India Map** from the landing page
-5. Use the filter panel to narrow by category, severity, or date range
-6. The map markers and dashboard cards update instantly
-7. Hit **Reset Filters** to clear everything
+5. Use the **search bar** to find incidents by city, title, or category — the map auto-pans to the first match
+6. Click any row in the results list to jump directly to that incident on the map
+7. Use the filter panel to narrow by category, severity, or date range
+8. The map markers and dashboard cards update instantly with every filter change
+9. Hit **Reset Filters** to clear everything
 
 ---
 
@@ -219,11 +226,11 @@ For platform-specific troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.
 | ✅ Done | Dashboard summary cards |
 | ✅ Done | Date-range filtering (API + UI) |
 | ✅ Done | 50-incident dataset across Indian cities |
+| ✅ Done | City search with map auto-pan, marker highlight, and results list |
 | 🔲 Planned | Heatmap layer (Leaflet.heat) |
 | 🔲 Planned | Paginate `/incidents` for large datasets |
 | 🔲 Planned | User authentication for admin access |
 | 🔲 Planned | Export filtered results to CSV |
-| 🔲 Planned | City-level search and geocoding |
 | 🔲 Planned | Docker Compose for one-command setup |
 | 🔲 Planned | Unit tests for API routes and React components |
 
