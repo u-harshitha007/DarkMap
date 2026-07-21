@@ -2,15 +2,14 @@ import { useEffect, useRef } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
 
 import { formatIncidentDate, SEVERITY_COLORS } from "../utils/crimeUtils";
+import HeatmapLayer from "./HeatmapLayer";
 
 const INDIA_CENTER = [20.5937, 78.9629];
 const INDIA_ZOOM = 5;
 const FOCUS_ZOOM = 13;
 
 // ---------------------------------------------------------------------------
-// MapFlyController
-// Must live inside MapContainer to access the Leaflet map instance via useMap.
-// Flies to focusTarget when it changes; resets to India overview when null.
+// MapFlyController — imperative pan/zoom via useMap()
 // ---------------------------------------------------------------------------
 function MapFlyController({ focusTarget }) {
   const map = useMap();
@@ -35,23 +34,23 @@ function MapFlyController({ focusTarget }) {
 // ---------------------------------------------------------------------------
 // CrimeMap
 // Props:
-//   incidents   — array of incident objects to render as markers
-//   focusTarget — { id, lat, lng } of the incident to highlight, or null
+//   incidents    — array of incident objects to render
+//   focusTarget  — { id, lat, lng } of the incident to highlight, or null
+//   showHeatmap  — boolean; when true renders heatmap instead of markers
 // ---------------------------------------------------------------------------
-export default function CrimeMap({ incidents, focusTarget }) {
-  // Keep one ref per marker so we can open the focused marker's popup
+export default function CrimeMap({ incidents, focusTarget, showHeatmap }) {
   const markerRefs = useRef({});
 
-  // Open the popup on the focused marker after fly animation settles
+  // Auto-open popup on focused marker after flyTo settles
   useEffect(() => {
-    if (!focusTarget) return;
+    if (!focusTarget || showHeatmap) return;
 
     const timer = setTimeout(() => {
       markerRefs.current[focusTarget.id]?.openPopup();
-    }, 1300); // slightly longer than flyTo duration (1200 ms)
+    }, 1300);
 
     return () => clearTimeout(timer);
-  }, [focusTarget]);
+  }, [focusTarget, showHeatmap]);
 
   return (
     <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70 shadow-lg shadow-black/20">
@@ -66,48 +65,52 @@ export default function CrimeMap({ incidents, focusTarget }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Imperative fly/reset controller */}
         <MapFlyController focusTarget={focusTarget} />
 
-        {incidents.map((incident) => {
-          const isFocused = focusTarget?.id === incident.id;
-          const baseColor = SEVERITY_COLORS[incident.severity];
+        {/* Heatmap layer — mounts/unmounts on toggle */}
+        <HeatmapLayer incidents={incidents} visible={showHeatmap} />
 
-          return (
-            <CircleMarker
-              key={incident.id}
-              ref={(ref) => {
-                if (ref) markerRefs.current[incident.id] = ref;
-              }}
-              center={[incident.latitude, incident.longitude]}
-              radius={isFocused ? 14 : 10}
-              pathOptions={{
-                color: isFocused ? "#ffffff" : baseColor,
-                fillColor: baseColor,
-                fillOpacity: isFocused ? 1 : 0.85,
-                weight: isFocused ? 3 : 2,
-              }}
-            >
-              <Popup>
-                <div className="space-y-1 text-sm text-zinc-900">
-                  <p className="font-semibold">{incident.title}</p>
-                  <p>
-                    <span className="font-medium">Category:</span>{" "}
-                    {incident.category}
-                  </p>
-                  <p>
-                    <span className="font-medium">Severity:</span>{" "}
-                    <span className="capitalize">{incident.severity}</span>
-                  </p>
-                  <p>
-                    <span className="font-medium">Date:</span>{" "}
-                    {formatIncidentDate(incident.incident_date)}
-                  </p>
-                </div>
-              </Popup>
-            </CircleMarker>
-          );
-        })}
+        {/* Circle markers — hidden in heatmap mode */}
+        {!showHeatmap &&
+          incidents.map((incident) => {
+            const isFocused = focusTarget?.id === incident.id;
+            const baseColor = SEVERITY_COLORS[incident.severity];
+
+            return (
+              <CircleMarker
+                key={incident.id}
+                ref={(ref) => {
+                  if (ref) markerRefs.current[incident.id] = ref;
+                }}
+                center={[incident.latitude, incident.longitude]}
+                radius={isFocused ? 14 : 10}
+                pathOptions={{
+                  color: isFocused ? "#ffffff" : baseColor,
+                  fillColor: baseColor,
+                  fillOpacity: isFocused ? 1 : 0.85,
+                  weight: isFocused ? 3 : 2,
+                }}
+              >
+                <Popup>
+                  <div className="space-y-1 text-sm text-zinc-900">
+                    <p className="font-semibold">{incident.title}</p>
+                    <p>
+                      <span className="font-medium">Category:</span>{" "}
+                      {incident.category}
+                    </p>
+                    <p>
+                      <span className="font-medium">Severity:</span>{" "}
+                      <span className="capitalize">{incident.severity}</span>
+                    </p>
+                    <p>
+                      <span className="font-medium">Date:</span>{" "}
+                      {formatIncidentDate(incident.incident_date)}
+                    </p>
+                  </div>
+                </Popup>
+              </CircleMarker>
+            );
+          })}
       </MapContainer>
     </div>
   );

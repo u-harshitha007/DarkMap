@@ -16,6 +16,7 @@ DarkMap pairs a **FastAPI** REST backend with a **React + Vite** frontend to tur
 
 - **Interactive Leaflet Map** — pan, zoom, click markers for incident details
 - **Severity-coded Markers** — red (high), amber (medium), green (low)
+- **Heatmap Layer** — toggle between marker view and a severity-weighted heatmap; all active filters apply to both views
 - **City Search** — search by city, incident title, or category; map auto-pans and zooms to the first match with animated `flyTo`
 - **Highlighted Marker** — the focused incident renders with a larger radius and white border so it stands out clearly
 - **Clickable Search Results** — each result row is selectable; clicking any row re-pans the map to that specific incident
@@ -227,7 +228,7 @@ For platform-specific troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.
 | ✅ Done | Date-range filtering (API + UI) |
 | ✅ Done | 50-incident dataset across Indian cities |
 | ✅ Done | City search with map auto-pan, marker highlight, and results list |
-| 🔲 Planned | Heatmap layer (Leaflet.heat) |
+| ✅ Done | Heatmap layer with severity-weighted intensity and toggle |
 | 🔲 Planned | Paginate `/incidents` for large datasets |
 | 🔲 Planned | User authentication for admin access |
 | 🔲 Planned | Export filtered results to CSV |

@@ -26,6 +26,9 @@ export default function IndiaMapPage() {
   // focusTarget: { id, lat, lng } of incident to pan/highlight, or null
   const [focusTarget, setFocusTarget] = useState(null);
 
+  // Heatmap toggle
+  const [showHeatmap, setShowHeatmap] = useState(false);
+
   useEffect(() => {
     async function fetchIncidents() {
       try {
@@ -153,16 +156,48 @@ export default function IndiaMapPage() {
           onDateToChange={setDateTo}
         />
 
-        <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.15em] text-zinc-400">
-          {Object.entries(SEVERITY_COLORS).map(([level, color]) => (
-            <span key={level} className="flex items-center gap-2">
-              <span
-                className="inline-block h-3 w-3 rounded-full"
-                style={{ backgroundColor: color }}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* Severity legend */}
+          <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.15em] text-zinc-400">
+            {Object.entries(SEVERITY_COLORS).map(([level, color]) => (
+              <span key={level} className="flex items-center gap-2">
+                <span
+                  className="inline-block h-3 w-3 rounded-full"
+                  style={{ backgroundColor: color }}
+                />
+                {level}
+              </span>
+            ))}
+          </div>
+
+          {/* Heatmap toggle */}
+          <button
+            onClick={() => setShowHeatmap((prev) => !prev)}
+            className={`flex items-center gap-2 rounded-md border px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] transition
+              ${
+                showHeatmap
+                  ? "border-red-500/60 bg-red-500/15 text-red-300 hover:bg-red-500/25"
+                  : "border-zinc-700 bg-zinc-900/70 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200"
+              }`}
+          >
+            {/* Flame icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3.5 w-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.657 18.657A8 8 0 0 1 6.343 7.343m0 0A8 8 0 1 1 17.657 18.657m0 0L21 21M9 9c0 2 1 3.5 3 4.5"
               />
-              {level}
-            </span>
-          ))}
+            </svg>
+            {showHeatmap ? "Heatmap On" : "Heatmap"}
+          </button>
         </div>
 
         {/* City / title / category search */}
@@ -193,7 +228,11 @@ export default function IndiaMapPage() {
         )}
 
         {!loading && !error && (
-          <CrimeMap incidents={filteredIncidents} focusTarget={focusTarget} />
+          <CrimeMap
+            incidents={filteredIncidents}
+            focusTarget={focusTarget}
+            showHeatmap={showHeatmap}
+          />
         )}
       </div>
     </PageShell>
