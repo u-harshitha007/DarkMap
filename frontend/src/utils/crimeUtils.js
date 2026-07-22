@@ -75,3 +75,61 @@ export function searchIncidents(incidents, query) {
     );
   });
 }
+
+// ---------------------------------------------------------------------------
+// CSV Export
+// ---------------------------------------------------------------------------
+
+/**
+ * Converts an array of incidents to a CSV string and triggers a browser download.
+ * Exported columns: id, title, category, severity, city, latitude, longitude, incident_date
+ * Filename: darkmap-incidents-YYYY-MM-DD.csv
+ */
+export function exportIncidentsToCsv(incidents) {
+  if (!incidents.length) return;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const filename = `darkmap-incidents-${today}.csv`;
+
+  const headers = [
+    "id",
+    "title",
+    "category",
+    "severity",
+    "city",
+    "latitude",
+    "longitude",
+    "incident_date",
+  ];
+
+  const escapeCell = (value) => {
+    const str = String(value ?? "");
+    // Wrap in quotes if the value contains a comma, quote, or newline
+    return str.includes(",") || str.includes('"') || str.includes("\n")
+      ? `"${str.replace(/"/g, '""')}"`
+      : str;
+  };
+
+  const rows = incidents.map((incident) => [
+    incident.id,
+    incident.title,
+    incident.category,
+    incident.severity,
+    getCityForIncident(incident),
+    incident.latitude,
+    incident.longitude,
+    new Date(incident.incident_date).toISOString(),
+  ]);
+
+  const csvContent = [headers, ...rows]
+    .map((row) => row.map(escapeCell).join(","))
+    .join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}

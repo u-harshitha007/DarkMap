@@ -4,6 +4,7 @@ import CitySearch from "../components/CitySearch";
 import CrimeFilters from "../components/CrimeFilters";
 import CrimeMap from "../components/CrimeMap";
 import DashboardCards from "../components/DashboardCards";
+import ExportButton from "../components/ExportButton";
 import PageShell from "../components/PageShell";
 import SearchResults from "../components/SearchResults";
 import {
@@ -170,9 +171,12 @@ export default function IndiaMapPage() {
             ))}
           </div>
 
-          {/* Heatmap toggle */}
-          <button
-            onClick={() => setShowHeatmap((prev) => !prev)}
+          {/* Heatmap toggle + Export */}
+          <div className="flex items-center gap-2">
+            <ExportButton incidents={filteredIncidents} />
+
+            <button
+              onClick={() => setShowHeatmap((prev) => !prev)}
             className={`flex items-center gap-2 rounded-md border px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] transition
               ${
                 showHeatmap
@@ -197,7 +201,8 @@ export default function IndiaMapPage() {
               />
             </svg>
             {showHeatmap ? "Heatmap On" : "Heatmap"}
-          </button>
+            </button>
+          </div>
         </div>
 
         {/* City / title / category search */}
