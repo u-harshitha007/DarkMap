@@ -17,6 +17,7 @@ DarkMap pairs a **FastAPI** REST backend with a **React + Vite** frontend to tur
 - **Interactive Leaflet Map** — pan, zoom, click markers for incident details
 - **Severity-coded Markers** — red (high), amber (medium), green (low)
 - **Heatmap Layer** — toggle between marker view and a severity-weighted heatmap; all active filters apply to both views
+- **Export to CSV** — download the currently filtered incidents as a CSV file; button is disabled when there are nothing to export
 - **City Search** — search by city, incident title, or category; map auto-pans and zooms to the first match with animated `flyTo`
 - **Highlighted Marker** — the focused incident renders with a larger radius and white border so it stands out clearly
 - **Clickable Search Results** — each result row is selectable; clicking any row re-pans the map to that specific incident
@@ -76,6 +77,8 @@ DarkMap/
 │       │   ├── CrimeFilters.jsx    # Category, severity, from-date, to-date filters + reset
 │       │   ├── CitySearch.jsx      # Search input with live result count badge
 │       │   ├── SearchResults.jsx   # Clickable results list with severity dots and city labels
+│       │   ├── HeatmapLayer.jsx    # Leaflet.heat layer — severity-weighted, togglable
+│       │   ├── ExportButton.jsx    # CSV export trigger — exports current filteredIncidents
 │       │   ├── DashboardCards.jsx  # Summary stat cards (total, high-severity, top category)
 │       │   └── PageShell.jsx       # Nav bar and layout wrapper
 │       ├── pages/
@@ -229,8 +232,8 @@ For platform-specific troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.
 | ✅ Done | 50-incident dataset across Indian cities |
 | ✅ Done | City search with map auto-pan, marker highlight, and results list |
 | ✅ Done | Heatmap layer with severity-weighted intensity and toggle |
-| 🔲 Planned | Paginate `/incidents` for large datasets |
-| 🔲 Planned | User authentication for admin access |
+| ✅ Done | Export filtered results to CSV |
+| 🔲 Planned | Paginate `/incidents` for large datasets || 🔲 Planned | User authentication for admin access |
 | 🔲 Planned | Export filtered results to CSV |
 | 🔲 Planned | Docker Compose for one-command setup |
 | 🔲 Planned | Unit tests for API routes and React components |
