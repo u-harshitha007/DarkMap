@@ -221,7 +221,7 @@ For platform-specific troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.
 
 ---
 
-## Roadmap
+## Implementation
 
 | Status | Item |
 |---|---|
