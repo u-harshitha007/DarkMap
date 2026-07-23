@@ -14,8 +14,12 @@ import {
   SEVERITY_COLORS,
 } from "../utils/crimeUtils";
 
+// How many incidents to show on the map at a time
+const PAGE_SIZE = 20;
+
 export default function IndiaMapPage() {
   const [allIncidents, setAllIncidents] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [category, setCategory] = useState("");
   const [severity, setSeverity] = useState("");
   const [dateFrom, setDateFrom] = useState("");
@@ -23,6 +27,7 @@ export default function IndiaMapPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   // focusTarget: { id, lat, lng } of incident to pan/highlight, or null
   const [focusTarget, setFocusTarget] = useState(null);
@@ -30,6 +35,7 @@ export default function IndiaMapPage() {
   // Heatmap toggle
   const [showHeatmap, setShowHeatmap] = useState(false);
 
+  // Fetch all incidents once (limit=0 means no server-side limit)
   useEffect(() => {
     async function fetchIncidents() {
       try {
@@ -43,10 +49,13 @@ export default function IndiaMapPage() {
         }
 
         const data = await response.json();
-        setAllIncidents(data);
+        // API now returns { total, skip, limit, incidents }
+        setAllIncidents(data.incidents);
+        setTotalCount(data.total);
       } catch (fetchError) {
         setError(fetchError.message);
         setAllIncidents([]);
+        setTotalCount(0);
       } finally {
         setLoading(false);
       }
@@ -54,6 +63,11 @@ export default function IndiaMapPage() {
 
     fetchIncidents();
   }, []);
+
+  // Reset visible count when filters change so we start from the first page
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [category, severity, dateFrom, dateTo, searchQuery]);
 
   const categories = useMemo(() => {
     return [...new Set(allIncidents.map((i) => i.category))].sort();
@@ -87,26 +101,35 @@ export default function IndiaMapPage() {
     [filteredIncidents, searchQuery],
   );
 
+  // Paginated slice for the map — export and search always use the full set
+  const visibleIncidents = useMemo(
+    () => filteredIncidents.slice(0, visibleCount),
+    [filteredIncidents, visibleCount],
+  );
+
+  const hasMore = visibleCount < filteredIncidents.length;
+
   // Auto-focus the first search result whenever the results list changes
   useEffect(() => {
     if (searchResults.length > 0) {
       const first = searchResults[0];
       setFocusTarget({ id: first.id, lat: first.latitude, lng: first.longitude });
     } else {
-      // No results or search cleared — reset map to India overview
       setFocusTarget(null);
     }
   }, [searchResults]);
 
-  // Handle manual row selection from the results list
   function handleSelectIncident(incident) {
     setFocusTarget({ id: incident.id, lat: incident.latitude, lng: incident.longitude });
   }
 
-  // When the search bar is cleared, also reset the focus
   function handleSearchChange(value) {
     setSearchQuery(value);
     if (!value.trim()) setFocusTarget(null);
+  }
+
+  function handleLoadMore() {
+    setVisibleCount((prev) => prev + PAGE_SIZE);
   }
 
   const highSeverityCases = filteredIncidents.filter(
@@ -171,36 +194,35 @@ export default function IndiaMapPage() {
             ))}
           </div>
 
-          {/* Heatmap toggle + Export */}
+          {/* Controls: Export + Heatmap */}
           <div className="flex items-center gap-2">
             <ExportButton incidents={filteredIncidents} />
 
             <button
               onClick={() => setShowHeatmap((prev) => !prev)}
-            className={`flex items-center gap-2 rounded-md border px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] transition
-              ${
-                showHeatmap
-                  ? "border-red-500/60 bg-red-500/15 text-red-300 hover:bg-red-500/25"
-                  : "border-zinc-700 bg-zinc-900/70 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200"
-              }`}
-          >
-            {/* Flame icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-3.5 w-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden="true"
+              className={`flex items-center gap-2 rounded-md border px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] transition
+                ${
+                  showHeatmap
+                    ? "border-red-500/60 bg-red-500/15 text-red-300 hover:bg-red-500/25"
+                    : "border-zinc-700 bg-zinc-900/70 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200"
+                }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17.657 18.657A8 8 0 0 1 6.343 7.343m0 0A8 8 0 1 1 17.657 18.657m0 0L21 21M9 9c0 2 1 3.5 3 4.5"
-              />
-            </svg>
-            {showHeatmap ? "Heatmap On" : "Heatmap"}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3.5 w-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.657 18.657A8 8 0 0 1 6.343 7.343m0 0A8 8 0 1 1 17.657 18.657m0 0L21 21M9 9c0 2 1 3.5 3 4.5"
+                />
+              </svg>
+              {showHeatmap ? "Heatmap On" : "Heatmap"}
             </button>
           </div>
         </div>
@@ -233,11 +255,46 @@ export default function IndiaMapPage() {
         )}
 
         {!loading && !error && (
-          <CrimeMap
-            incidents={filteredIncidents}
-            focusTarget={focusTarget}
-            showHeatmap={showHeatmap}
-          />
+          <>
+            <CrimeMap
+              incidents={visibleIncidents}
+              focusTarget={focusTarget}
+              showHeatmap={showHeatmap}
+            />
+
+            {/* Pagination footer */}
+            <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/70 px-5 py-3">
+              <p className="text-xs text-zinc-500">
+                Showing{" "}
+                <span className="font-medium text-zinc-300">
+                  {visibleIncidents.length}
+                </span>{" "}
+                of{" "}
+                <span className="font-medium text-zinc-300">
+                  {filteredIncidents.length}
+                </span>{" "}
+                incidents
+                {totalCount !== filteredIncidents.length && (
+                  <span className="ml-1 text-zinc-600">
+                    ({totalCount} total in dataset)
+                  </span>
+                )}
+              </p>
+
+              {hasMore && (
+                <button
+                  onClick={handleLoadMore}
+                  className="rounded-md border border-zinc-700 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-zinc-400 transition hover:border-zinc-500 hover:text-zinc-200"
+                >
+                  Load {Math.min(PAGE_SIZE, filteredIncidents.length - visibleCount)} more
+                </button>
+              )}
+
+              {!hasMore && filteredIncidents.length > PAGE_SIZE && (
+                <span className="text-xs text-zinc-600">All incidents shown</span>
+              )}
+            </div>
+          </>
         )}
       </div>
     </PageShell>

@@ -20,3 +20,11 @@ class CrimeIncidentRead(CrimeIncidentBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+
+class PaginatedIncidentsRead(BaseModel):
+    """Paginated wrapper returned by GET /incidents."""
+    total: int           # total matching incidents (before pagination)
+    skip: int            # offset applied
+    limit: int           # page size applied (0 = all)
+    incidents: list[CrimeIncidentRead]

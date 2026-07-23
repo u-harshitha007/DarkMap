@@ -7,14 +7,14 @@ from fastapi.middleware.cors import CORSMiddleware
 import models
 from data_loader import load_crime_incidents
 from database import Base, engine
-from schemas import CrimeIncidentRead
+from schemas import CrimeIncidentRead, PaginatedIncidentsRead
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="DarkMap",
     description="Visualizing Crime. Revealing Patterns.",
-    version="0.1.0",
+    version="0.2.0",
 )
 
 app.add_middleware(
@@ -31,47 +31,57 @@ def root():
     return {"project": "DarkMap", "status": "running"}
 
 
-@app.get("/incidents", response_model=list[CrimeIncidentRead])
+@app.get("/incidents", response_model=PaginatedIncidentsRead)
 def get_incidents(
     category: Optional[str] = Query(default=None),
     severity: Optional[str] = Query(default=None),
     date_from: Optional[date] = Query(
         default=None,
-        description="Inclusive start date (YYYY-MM-DD). Filters incidents on or after this date.",
+        description="Inclusive start date (YYYY-MM-DD).",
     ),
     date_to: Optional[date] = Query(
         default=None,
-        description="Inclusive end date (YYYY-MM-DD). Filters incidents on or before this date.",
+        description="Inclusive end date (YYYY-MM-DD).",
+    ),
+    skip: int = Query(
+        default=0,
+        ge=0,
+        description="Number of incidents to skip (offset).",
+    ),
+    limit: int = Query(
+        default=0,
+        ge=0,
+        description="Maximum incidents to return. 0 means return all.",
     ),
 ):
     incidents = load_crime_incidents()
 
     if category:
         incidents = [
-            incident
-            for incident in incidents
-            if incident["category"].lower() == category.lower()
+            i for i in incidents if i["category"].lower() == category.lower()
         ]
 
     if severity:
         incidents = [
-            incident
-            for incident in incidents
-            if incident["severity"] == severity.lower()
+            i for i in incidents if i["severity"] == severity.lower()
         ]
 
     if date_from:
         incidents = [
-            incident
-            for incident in incidents
-            if incident["incident_date"].date() >= date_from
+            i for i in incidents if i["incident_date"].date() >= date_from
         ]
 
     if date_to:
         incidents = [
-            incident
-            for incident in incidents
-            if incident["incident_date"].date() <= date_to
+            i for i in incidents if i["incident_date"].date() <= date_to
         ]
 
-    return incidents
+    total = len(incidents)
+
+    # Apply pagination only when limit > 0
+    if skip:
+        incidents = incidents[skip:]
+    if limit:
+        incidents = incidents[:limit]
+
+    return {"total": total, "skip": skip, "limit": limit, "incidents": incidents}
