@@ -2,7 +2,7 @@
 
 A full-stack crime analytics dashboard that visualises geo-tagged incidents across Indian cities on an interactive map. Filter by category, severity, and date range in real time.
 
-![Tech Stack](https://img.shields.io/badge/Python-3.11+-blue?style=flat-square) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green?style=flat-square) ![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-38bdf8?style=flat-square)
+ 
 
 ---
 
