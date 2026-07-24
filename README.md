@@ -203,8 +203,6 @@ npm run dev
 
 App running at `http://localhost:5173`
 
-For platform-specific troubleshooting: [docs/INSTALLATION.md](docs/INSTALLATION.md)
-
 ---
 
 ## Usage
